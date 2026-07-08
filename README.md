@@ -7,102 +7,44 @@
 ![Docker](https://img.shields.io/badge/Docker-Supported-blue)
 ![Tests](https://img.shields.io/badge/Tests-Jest-success)
 
-**AI-powered CSV Lead Importer built for GrowEasy's Software Developer Assignment.**
+**AI-powered CSV lead importer — built for [GrowEasy](https://groweasy.ai)'s Software Developer assignment.**
 
-Upload a CSV from **any source**—Facebook Lead Ads, Google Ads, Excel, another CRM, or a manually created spreadsheet—and LeadBridge intelligently maps it into GrowEasy's CRM schema using Gemini AI.
+Upload a CSV from *any* source — Facebook Lead Ads, Google Ads, Excel, another CRM, or a
+hand-typed spreadsheet — and LeadBridge maps it into GrowEasy's fixed CRM schema
+automatically, regardless of what the original column names are.
 
----
-
-# 🌐 Live Demo
-
-### Frontend
-
-https://lead-bridge-theta.vercel.app/
-
-### Backend
-
-https://leadbridge-backend-bf5w.onrender.com
-
-> **Note**
->
-> The backend is deployed on Render's free tier.
-> The first request after inactivity may take **30–50 seconds** while the server wakes up.
+Repo: https://github.com/sahilsingh78/LeadBridge
 
 ---
 
-# ✨ Features
+## The problem this solves
 
-- Drag & Drop CSV Upload
-- Client-side CSV Preview (No AI Calls)
-- Intelligent AI Field Mapping
-- Structured JSON Output
-- Batch Processing
-- Retry Mechanism
-- Server-side Validation
-- Imported vs Skipped Records Summary
-- Responsive UI
-- Docker Support
-- Backend Unit Tests
+Every lead source names its columns differently. `full_name` on Facebook, `Contact Name`
+on Google Ads, `Client` on a hand-typed sheet — same information, different labels. The
+challenge isn't parsing CSVs, it's **understanding** them regardless of shape, then
+converting that understanding into a fixed, strictly-validated CRM record.
 
----
+## How it works
 
+1. **Upload** — drag & drop or pick a `.csv` file.
+2. **Preview** — parsed and shown in a table entirely client-side. No AI call happens yet.
+3. **Confirm** — clicking Confirm sends the raw CSV to the backend for the first time.
+4. **AI Mapping** — the backend batches rows (25/batch) and asks Gemini to map whatever
+   columns exist onto the CRM schema, enforcing enum and skip rules via both the prompt
+   and a server-side validation layer.
+5. **Result** — imported vs. skipped records, with a reason attached to every skip.
 # 📸 Screenshots
 
 ## Upload CSV
-
 ![Upload](docs/upload.png)
 
----
-
 ## CSV Preview
-
 ![Preview](docs/preview.png)
 
----
-
 ## AI Parsed Result
-
 ![Result](docs/result.png)
 
----
-
-# 📖 Problem Statement
-
-Every lead source exports CSVs differently.
-
-Examples:
-
-Facebook
-
-```
-Full Name
-Phone
-Email
-```
-
-Google Ads
-
-```
-Contact Name
-Mobile Number
-Email Address
-```
-
-Excel
-
-```
-Client
-WhatsApp
-Mail
-```
-
-Although these contain the same information, the column names differ.
-
-LeadBridge uses Gemini AI to understand these variations and automatically map them into GrowEasy's standardized CRM schema.
-
----
-
-# 🔄 Workflow
+## 🔄 Workflow
 
 ```
 CSV Upload
@@ -132,281 +74,126 @@ CRM Records
 Frontend Result Table
 ```
 
----
+## Tech stack
 
-# 🛠 Tech Stack
+| Layer      | Choice                                             |
+|------------|-----------------------------------------------------|
+| Frontend   | Next.js (App Router) + TypeScript + Tailwind CSS     |
+| Backend    | Node.js + Express                                    |
+| AI         | Google Gemini (`gemini-2.5-flash`), structured JSON output |
+| Testing    | Jest (backend unit tests)                            |
 
-| Layer | Technology |
-|--------|------------|
-| Frontend | Next.js (App Router), TypeScript, Tailwind CSS |
-| Backend | Node.js, Express |
-| AI | Gemini 2.5 Flash |
-| CSV Parsing | PapaParse |
-| Testing | Jest |
-| Deployment | Vercel + Render |
-| Containerization | Docker |
-
----
-
-# 📂 Project Structure
+## Project structure
 
 ```
 LeadBridge/
-├── backend/
+├── backend/                  Express API
 │   ├── src/
-│   │   ├── config/
-│   │   ├── middleware/
-│   │   ├── routes/
-│   │   ├── services/
+│   │   ├── config/            CRM schema/enums + Gemini client setup
+│   │   ├── services/          csvParser, promptBuilder, aiExtractor, validator
+│   │   ├── routes/            POST /api/import
+│   │   ├── middleware/        centralized error handler
 │   │   └── server.js
-│   ├── Dockerfile
-│   └── .env.example
-│
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── lib/
-│   ├── Dockerfile
-│   └── .env.local.example
-│
-├── sample-data/
-├── docs/
+│   ├── src/services/__tests__/  unit tests (parser + validator)
+│   ├── .env.example
+│   └── Dockerfile
+├── frontend/                  Next.js app
+│   ├── app/                    page.tsx (4-step flow), layout.tsx, globals.css
+│   ├── components/             UploadDropzone, MappingShowcase, DataTable,
+│   │                            ProcessingPipeline, StepRail, StatusPill
+│   ├── lib/                    csvClientParse, api, sampleTemplate, types
+│   ├── .env.local.example
+│   └── Dockerfile
+├── sample-data/                messy_facebook_export.csv (for testing AI mapping)
 └── docker-compose.yml
 ```
 
----
+## Running locally
 
-# 🚀 Running Locally
+**Prerequisites:** Node.js 18+, and a free Gemini API key from
+https://aistudio.google.com/app/apikey
 
-## Prerequisites
-
-- Node.js 18+
-- Gemini API Key
-
-Backend
-
+**Backend** (terminal 1):
 ```bash
 cd backend
 npm install
-cp .env.example .env
+cp .env.example .env      # Windows: copy .env.example .env
+```
+Open `.env` and set `GEMINI_API_KEY=your_key_here`. Then:
+```bash
 npm run dev
 ```
+Runs on http://localhost:4000
 
-Runs on
-
-```
-http://localhost:4000
-```
-
-Frontend
-
+**Frontend** (terminal 2):
 ```bash
 cd frontend
 npm install
-cp .env.local.example .env.local
+cp .env.local.example .env.local      # Windows: copy .env.local.example .env.local
 npm run dev
 ```
+Runs on http://localhost:3000
 
-Runs on
+**Test it:** upload `sample-data/messy_facebook_export.csv` — a deliberately messy file
+with non-standard column names (`WhatsApp No.`, `Alt Phone`, `Query Date`) to exercise
+the AI mapping.
 
-```
-http://localhost:3000
-```
-
----
-
-# 🔑 Environment Variables
-
-Backend
-
-```env
-PORT=4000
-
-GEMINI_API_KEY=your_key
-
-GEMINI_MODEL=gemini-2.5-flash
-
-BATCH_SIZE=25
-
-BATCH_CONCURRENCY=2
-
-MAX_RETRIES=3
-
-FRONTEND_ORIGIN=http://localhost:3000
-```
-
-Frontend
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:4000
-```
-
----
-
-# 📡 API
-
-## POST
-
-```
-/api/import
-```
-
-Accepts
-
-```
-multipart/form-data
-```
-
-Returns
-
-```json
-{
-  "imported":96,
-  "skipped":4,
-  "records":[]
-}
-```
-
----
-
-# 🤖 CRM Extraction Rules
-
-The backend enforces every assignment rule.
-
-- Allowed crm_status values only
-- Allowed data_source values only
-- Date normalization
-- Multiple email handling
-- Multiple phone handling
-- Skip invalid records
-- Server-side validation after AI output
-
----
-
-# ⚙️ Design Decisions
-
-### Client-side Preview
-
-The preview is generated entirely in the browser using PapaParse.
-
-No AI request is made until the user clicks **Confirm**, matching the assignment requirements.
-
----
-
-### AI Mapping
-
-Gemini understands arbitrary column names and maps them into the fixed CRM schema.
-
-Example
-
-```
-Customer Name
-
-↓
-
-name
-
-WhatsApp
-
-↓
-
-mobile_without_country_code
-
-Mail ID
-
-↓
-
-email
-```
-
----
-
-### Batch Processing
-
-Rows are processed in batches of 25.
-
-Benefits
-
-- Lower token usage
-- Faster retries
-- Better scalability
-
----
-
-### Retry Mechanism
-
-Failed batches retry automatically using exponential backoff.
-
-If a batch still fails, only that batch is skipped instead of failing the entire import.
-
----
-
-### Validation Layer
-
-Gemini output is never trusted blindly.
-
-Every record is validated again on the backend before returning it.
-
----
-
-# 🧪 Tests
-
-Run backend tests
-
+### Backend tests
 ```bash
 cd backend
-
 npm test
 ```
 
----
-
-# 🐳 Docker
-
+### Docker (both services)
 ```bash
-GEMINI_API_KEY=your_key docker compose up --build
+GEMINI_API_KEY=your_key_here docker compose up --build
 ```
 
----
+## CRM extraction rules
 
-# 🚀 Deployment
+The AI extraction layer enforces every rule from the assignment spec:
 
-Frontend
+- `crm_status` restricted to `GOOD_LEAD_FOLLOW_UP`, `DID_NOT_CONNECT`, `BAD_LEAD`,
+  `SALE_DONE` — anything else is blanked server-side.
+- `data_source` restricted to `leads_on_demand`, `meridian_tower`, `eden_park`,
+  `varah_swamy`, `sarjapur_plots` — same safety net.
+- `created_at` normalized to a `new Date(...)`-parseable format; unparseable values are
+  blanked rather than passed through.
+- Multiple emails/phone numbers: first one wins the dedicated field, the rest are
+  appended to `crm_note`.
+- Rows with neither a usable email nor mobile number are skipped, with a reason.
 
-https://lead-bridge-theta.vercel.app/
+## Engineering notes
 
-Backend
+- **Batching + retries** — rows are chunked (`BATCH_SIZE=25`), processed with limited
+  concurrency (`BATCH_CONCURRENCY=2`), and each batch retries up to `MAX_RETRIES=3`
+  times with exponential backoff. A batch that still fails degrades to "all its rows
+  skipped with a reason" rather than failing the whole import.
+- **Two-layer validation** — enum constraints and the skip rule are enforced both in the
+  Gemini prompt/response schema *and* re-checked independently in `validator.js`, since
+  LLM output shouldn't be trusted blindly even with structured output mode.
+- **No AI on preview** — the preview table (Step 2) is parsed entirely client-side with
+  PapaParse, so it's genuinely zero AI calls until the user confirms, matching the spec.
 
-https://leadbridge-backend-bf5w.onrender.com
+## Deployment
 
----
+Live now:
+- **Backend (Render)**: https://leadbridge-backend-bf5w.onrender.com — Docker-based web service, root
+  directory `backend`, env vars set for `GEMINI_API_KEY`, `GEMINI_MODEL`, batching config, and
+  `FRONTEND_ORIGIN` locked to the Vercel domain below.
+- **Frontend (Vercel)**: https://lead-bridge-theta.vercel.app/ — root directory `frontend`,
+  `NEXT_PUBLIC_API_URL` pointed at the Render backend above.
 
-# 🔮 Future Improvements
+Note: the Render free tier sleeps after 15 minutes of inactivity, so the first request after
+idle time can take 30–50s while it wakes up.
 
-- Streaming CSV Parsing
-- Progress Indicator
-- Authentication
-- Export to Excel
-- Background Job Queue
-- Database Support
-- Audit Logs
+## Submission
 
----
+- Hosted app: https://lead-bridge-theta.vercel.app/
+- Backend API: https://leadbridge-backend-bf5w.onrender.com
+- Repo: https://github.com/sahilsingh78/LeadBridge
+- Position: Software Developer Intern
 
-# 👨‍💻 Author
-
-**Sahil Singh**
-
-GitHub
-
-https://github.com/sahilsingh78
-
-LinkedIn
-
-https://linkedin.com/in/sahilbuilds
-
----
-
-# 📄 License
+## 📄 License
 
 MIT
