@@ -44,7 +44,7 @@ converting that understanding into a fixed, strictly-validated CRM record.
 ## AI Parsed Result
 ![Result](docs/result.png)
 
-## 🔄 Workflow
+## Workflow
 
 ```
 CSV Upload
