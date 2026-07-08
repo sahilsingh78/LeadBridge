@@ -130,13 +130,19 @@ The AI extraction layer enforces every rule from the assignment spec:
 
 ## Deployment
 
-- **Backend → Railway**: new project from this repo, root directory `backend`, set
-  `GEMINI_API_KEY` as an environment variable.
-- **Frontend → Vercel**: new project from this repo, root directory `frontend`, set
-  `NEXT_PUBLIC_API_URL` to the deployed Railway backend URL.
+Live now:
+- **Backend (Render)**: https://leadbridge-backend-bf5w.onrender.com — Docker-based web service, root
+  directory `backend`, env vars set for `GEMINI_API_KEY`, `GEMINI_MODEL`, batching config, and
+  `FRONTEND_ORIGIN` locked to the Vercel domain below.
+- **Frontend (Vercel)**: https://lead-bridge-theta.vercel.app/ — root directory `frontend`,
+  `NEXT_PUBLIC_API_URL` pointed at the Render backend above.
+
+Note: the Render free tier sleeps after 15 minutes of inactivity, so the first request after
+idle time can take 30–50s while it wakes up.
 
 ## Submission
 
-- Hosted app: _add Vercel URL here_
+- Hosted app: https://lead-bridge-theta.vercel.app/
+- Backend API: https://leadbridge-backend-bf5w.onrender.com
 - Repo: https://github.com/sahilsingh78/LeadBridge
 - Position: Software Developer Intern
