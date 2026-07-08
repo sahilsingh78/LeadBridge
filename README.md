@@ -33,15 +33,16 @@ converting that understanding into a fixed, strictly-validated CRM record.
    columns exist onto the CRM schema, enforcing enum and skip rules via both the prompt
    and a server-side validation layer.
 5. **Result** — imported vs. skipped records, with a reason attached to every skip.
-# 📸 Screenshots
 
-## Upload CSV
+## Screenshots
+
+### Upload CSV
 ![Upload](docs/upload.png)
 
-## CSV Preview
+### CSV Preview
 ![Preview](docs/preview.png)
 
-## AI Parsed Result
+### AI Parsed Result
 ![Result](docs/result.png)
 
 ## Workflow
@@ -194,6 +195,6 @@ idle time can take 30–50s while it wakes up.
 - Repo: https://github.com/sahilsingh78/LeadBridge
 - Position: Software Developer Intern
 
-## 📄 License
+## License
 
 MIT
