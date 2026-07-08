@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GrowEasy · CSV Lead Importer",
+  title: "LeadBridge",
   description: "Import CRM leads from any CSV format using AI-powered field mapping.",
 };
 

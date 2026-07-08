@@ -69,7 +69,7 @@ export function UploadDropzone({
       )}
       <button
         onClick={downloadSampleTemplate}
-        className="mt-3 flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-signal"
+        className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md border border-line bg-white px-3 py-2 text-xs font-medium text-ink-soft transition-colors hover:border-signal hover:text-signal"
       >
         <Download size={13} /> Download sample CSV template
       </button>

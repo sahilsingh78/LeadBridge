@@ -125,23 +125,23 @@ export default function Home() {
       )}
 
       {step === "upload" && (
-        <section className="grid flex-1 grid-cols-1 items-center gap-10 py-6 lg:grid-cols-[1.1fr_1fr]">
-          <div className="flex flex-col gap-6">
-            <div>
-              <h2 className="font-display text-xl font-semibold text-ink sm:text-2xl">
-                Upload any CSV.
-              </h2>
-              <p className="mt-2 max-w-md text-sm text-ink-soft">
-                Facebook, Google Ads, Excel, or manually created spreadsheets — LeadBridge automatically
-                understands your column names and maps them to the correct CRM fields.
-              </p>
-              <p className="mt-2 max-w-md text-xs text-ink-soft/80">
-                Supports Facebook Leads, Google Ads, Excel, CRM exports, and custom CSVs.
-              </p>
-            </div>
-            <UploadDropzone onFileAccepted={handleFileAccepted} />
+        <section className="flex flex-1 flex-col gap-6 py-6">
+          <div>
+            <h2 className="font-display text-xl font-semibold text-ink sm:text-2xl">
+              Upload any CSV.
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-ink-soft">
+              Facebook, Google Ads, Excel, or manually created spreadsheets — LeadBridge automatically
+              understands your column names and maps them to the correct CRM fields.
+            </p>
+            <p className="mt-2 max-w-2xl text-xs text-ink-soft/80">
+              Supports Facebook Leads, Google Ads, Excel, CRM exports, and custom CSVs.
+            </p>
           </div>
-          <MappingShowcase />
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+            <UploadDropzone onFileAccepted={handleFileAccepted} />
+            <MappingShowcase />
+          </div>
         </section>
       )}
 
